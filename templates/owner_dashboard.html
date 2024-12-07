@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+    <div class="order-container">
+        <!-- Form Section -->
+        <div class="order-form">
+            <form id="orderForm" method="POST" action="{% url 'owner_dashboard' %}">
+                {% csrf_token %}
+                <h1>Order Breakdown</h1>
+
+                <label for="fullname">Name</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Name" required><br><br>
+
+                <label for="phone">Contact</label>
+                <input type="text" id="phone" name="phone" placeholder="Phone No" required><br><br>
+
+                <label for="pickup_location">Pickup Location:</label>
+                <input type="text" id="pickup_location" name="pickup_location" placeholder="Enter your current location" required>
+                <button type="button" onclick="detectLocation()">Set My Current Location</button><br><br>
+
+                <label for="drop_off_location">Dropoff Location:</label>
+                <input type="text" id="drop_off_location" name="drop_off_location" placeholder="Enter your destination" required><br><br>
+
+                <label for="fare">Total Cost:</label>
+                <input type="text" id="fare" name="fare" readonly placeholder="Calculated cost will appear here"><br><br>
+
+                <label for="driver_id">Select Driver:</label>
+                <select id="driver_id" name="driver_name" required>
+                    <option value="" disabled selected>Select a driver</option>
+                    <option value="John Doe">John Doe</option>
+                    <option value="Jane Smith">Jane Smith</option>
+                    <option value="Mike Johnson">Mike Johnson</option>
+                    <option value="Emily Davis">Emily Davis</option>
+                    </select><br><br>
+
+                <button type="submit">Submit Order</button>
+            </form>
+        </div>
+
+        <!-- Map Section -->
+        <div class="map-container">
+            <h3>Search Locations</h3>
+            <input type="text" id="location_filter" placeholder="Search (e.g., Garage)" />
+            <button type="button" onclick="filterLocations()">Search</button>
+            <div id="map" style="height: 400px; width: 100%;"></div>
+            <div id="garages_list"></div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        let map;
+        let marker;
+        let selectedDropOffLocation = null;
+        const garages = [];
+
+        // Function to generate real garages near the location
+        function generateGarages() {
+            const centralLatitude = -1.286389;
+            const centralLongitude = 36.817223;
+            const radius = 0.02; // Approximate km radius around the center
+
+            // Add real garages near the location
+            garages.push({ name: 'Shell Garage', location: [centralLatitude + 0.001, centralLongitude + 0.001] });
+            garages.push({ name: 'Total Garage', location: [centralLatitude - 0.001, centralLongitude - 0.001] });
+            garages.push({ name: 'Car Experts Garage', location: [centralLatitude + 0.002, centralLongitude + 0.002] });
+
+            // Generate other random garages around the area
+            for (let i = 3; i < 10; i++) {
+                const lat = centralLatitude + (Math.random() - 0.5) * radius * 2;  // Random latitude
+                const lon = centralLongitude + (Math.random() - 0.5) * radius * 2; // Random longitude
+                garages.push({ name: `Garage ${i + 1}`, location: [lat, lon] });
+            }
+        }
+
+        // Initialize map
+        function initMap() {
+            const defaultLocation = [-1.286389, 36.817223];
+
+            map = L.map('map').setView(defaultLocation, 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            marker = L.marker(defaultLocation, { draggable: true }).addTo(map);
+
+            // Update pickup location with address when marker is dragged
+            marker.on('dragend', function () {
+                const position = marker.getLatLng();
+                fetchAddress(position.lat, position.lng, 'pickup_location');
+                calculateFare();
+            });
+
+            // Add all garages to the map
+            garages.forEach(garage => {
+                const garageMarker = L.marker(garage.location).addTo(map).bindPopup(`<strong>${garage.name}</strong>`);
+                garageMarker.on('click', function () {
+                    selectedDropOffLocation = garage.location;
+                    fetchAddress(garage.location[0], garage.location[1], 'drop_off_location');
+                    garageMarker.openPopup();
+                    calculateFare();
+                });
+            });
+        }
+
+        // Detect user's current location
+        function detectLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const userLocation = [position.coords.latitude, position.coords.longitude];
+                        map.setView(userLocation, 14);
+                        marker.setLatLng(userLocation);
+                        fetchAddress(userLocation[0], userLocation[1], 'pickup_location');
+                        calculateFare();
+                    },
+                    error => {
+                        console.error("Geolocation error: ", error);
+                        alert("Failed to detect location.");
+                    }
+                );
+            } else {
+                alert("Geolocation not supported.");
+            }
+        }
+
+        // Fetch address from coordinates
+        function fetchAddress(lat, lng, inputId) {
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.display_name || `${lat}, ${lng}`;
+                    document.getElementById(inputId).value = address;
+                })
+                .catch(error => {
+                    console.error("Error fetching address:", error);
+                    document.getElementById(inputId).value = `${lat}, ${lng}`;
+                });
+        }
+
+        // Filter locations
+        function filterLocations() {
+            const filter = document.getElementById('location_filter').value.toLowerCase();
+            const filteredGarages = garages.filter(garage => garage.name.toLowerCase().includes(filter));
+
+            // Clear and add markers
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer !== marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            filteredGarages.forEach(garage => {
+                const marker = L.marker(garage.location).addTo(map).bindPopup(`<strong>${garage.name}</strong>`);
+                marker.on('click', function () {
+                    selectedDropOffLocation = garage.location;
+                    fetchAddress(garage.location[0], garage.location[1], 'drop_off_location');
+                    marker.openPopup();
+                    calculateFare();
+                });
+            });
+        }
+
+        // Calculate fare
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
+
+        function calculateFare() {
+            const pickupCoords = marker.getLatLng();
+            if (selectedDropOffLocation) {
+                const distance = calculateDistance(
+                    pickupCoords.lat, pickupCoords.lng,
+                    selectedDropOffLocation[0], selectedDropOffLocation[1]
+                );
+
+                const baseFare = 50; // Base fare in KES
+                const pricePerKm = 250; // Price per km in KES
+                const totalFare = baseFare + (distance * pricePerKm);
+
+                document.getElementById('fare').value = `KES ${totalFare.toFixed(2)}`;
+            }
+        }
+
+        // Initialize and generate some garages
+        generateGarages();
+        initMap();
+    </script>
+
+    <style>
+    .order-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .order-form {
+        flex: 0.7; /* Reduced width for the form */
+        padding: 20px;
+        background-color: #ffffff; /* Slightly whiter background */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-form label {
+        display: block;
+        margin: 5px 0;
+        font-weight: bold;
+    }
+
+    .order-form input,
+    .order-form select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 20px; /* Rounded corners for inputs */
+    }
+
+    .order-form button {
+        width: 100%;
+        padding: 10px;
+        background-color: #ff0000;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 20px; /* Rounded corners for buttons */
+        cursor: pointer;
+    }
+
+    .order-form button:hover {
+        background-color: #cc0000;
+    }
+
+    .map-container {
+        flex: 1.5; /* Increased width for the map */
+        padding: 20px;
+        background-color: #ffffff; /* Slightly whiter background */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .map-container h3 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    #location_filter {
+        padding: 10px;
+        font-size: 16px;
+        width: calc(70%); /* Adjusted width for proper alignment */
+        margin-right: 10px;
+        border-radius: 20px; /* Rounded corners for input */
+        border: 1px solid #ccc;
+    }
+
+    #location_filter:focus {
+        outline: none;
+        border-color: #ff0000;
+    }
+
+    #location_filter + button {
+        padding: 10px;
+        font-size: 16px;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        border-radius: 20px; /* Rounded corners for the search button */
+        cursor: pointer;
+    }
+
+    #location_filter + button:hover {
+        background-color: #cc0000;
+    }
+    h1{
+        font-size: 20px;
+        font-weight: bold;
+    }
+</style>
+
+{% endblock %}

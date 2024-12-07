@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>View Drivers</h1>
+    <div class="table-responsive container mt-4">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>License</th>
+                    <th>Insurance</th>
+                    <th>Vehicle Model</th>
+                    <th>Vehicle Number</th>
+                    <th>Vehicle Registration</th>
+                    <th>Vehicle Images</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each order object -->
+                {% for x in details %}
+                    <tr>
+                        <td>{{ x.fullname }}</td>
+                        <td>{{ x.contact_number }}</td>
+                        <td>{{ x.email }}</td>
+
+                        <!-- License Document -->
+                        <td>
+                            {% if x.license %}
+                                <a href="{{ x.license.url }}" target="_blank" class="btn btn-link">View License</a>
+                            {% else %}
+                                No License Available
+                            {% endif %}
+                        </td>
+
+                        <!-- Insurance Document -->
+                        <td>
+                            {% if x.insurance %}
+                                <a href="{{ x.insurance.url }}" target="_blank" class="btn btn-link">View Insurance</a>
+                            {% else %}
+                                No Insurance Available
+                            {% endif %}
+                        </td>
+
+                        <td>{{ x.vehicle_model }}</td>
+                        <td>{{ x.vehicle_number }}</td>
+                        <td>{{ x.vehicle_registration }}</td>
+
+                        <!-- Vehicle Image -->
+                        <td>
+                            {% if x.image %}
+                                <img src="{{ x.vehicle_image.url }}" alt="Vehicle Image" style="width: 300px; height: 300px;">
+                            {% else %}
+                                No Image Available
+                            {% endif %}
+                        </td>
+
+                        <!-- Action Buttons -->
+                        <td>
+                            <a href="/edit/{{ x.id }}" class="btn btn-dark" id="btn1">EDIT</a>
+                            <a href="/delete/{{ x.id }}" class="btn btn-danger">DELETE</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+<style>
+    .table {
+        background-color: white;
+    }
+
+    .btn-dark {
+        background-color: black;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #ff0000;
+        color: white;
+    }
+
+    .btn-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+</style>

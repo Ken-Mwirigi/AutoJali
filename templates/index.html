@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+  <style>
+    .header-content {
+      text-align: left;
+      padding: 100px 0;  /* Reduced padding to move the content up */
+    }
+
+    .header-content h1 {
+      font-size: 4.5rem;
+      font-weight: bolder;
+      color: black;
+    }
+
+    .header-content p {
+      font-size: 1.7rem;
+      color: black;
+    }
+
+    .header-buttons .btn {
+      margin-right: 10px;
+      padding: 12px 25px;  /* Reduced padding */
+      font-size: 1.1rem;  /* Reduced font size */
+      border-radius: 25px;  /* Rounded edges */
+    }
+
+    .hero-img {
+      text-align: center;
+    }
+
+    .hero-img img {
+      max-width: 95%;
+      height: auto;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row header-content">
+      <div class="col-md-6">
+        <h1>Your Reliable Auto Companion</h1>
+        <p class="slogan">Anywhere you break down, we'll be there to get you back on track</p>
+        <div class="header-buttons">
+          <a href="{% url 'register-type' %}" class="btn btn-lg" style="background-color: #FF0000; color: #ffffff;">Get Started</a>
+          <a href="{% url 'register-type' %}" class="btn btn-lg" style="background-color: #000000; color: #ffffff;">Watch Demo Video</a>
+        </div>
+      </div>
+      <div class="col-md-6 hero-img">
+        <img src="{% static 'assets/img/breakdown.png' %}" alt="AutoJali Illustration">
+      </div>
+    </div>
+  </div>
+{% endblock %}

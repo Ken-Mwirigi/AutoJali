@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Register as Car Owner or Breakdown Driver - AutoJali
+{% endblock %}
+
+{% block content %}
+
+<section class="vh-100" style="background-color: white; display: flex; justify-content: center; align-items: flex-start; padding-top: 150px;">  <!-- Increased padding-top to lower the buttons -->
+  <div class="container text-center">
+
+    <div class="d-flex justify-content-center">
+      <!-- Car Owner Button (Red with White text) -->
+      <a href="{% url 'register-owner' %}" class="btn btn-lg btn-danger d-flex align-items-center justify-content-center" style="padding: 25px 60px; font-size: 22px; border-radius: 40px; color: #ffffff; background-color: red; border: none; margin-top: 50px;">
+        Register as Car Owner
+        <i class="bi bi-arrow-right ml-3"></i>
+      </a>
+      <!-- Driver Button (Black with White text) -->
+      <a href="{% url 'register-driver' %}" class="btn btn-lg btn-dark d-flex align-items-center justify-content-center" style="padding: 25px 60px; font-size: 22px; border-radius: 40px; color: #ffffff; background-color: black; border: none; margin-left: 20px; margin-top: 50px;">
+        Register as Breakdown Driver
+        <i class="bi bi-arrow-right ml-3"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

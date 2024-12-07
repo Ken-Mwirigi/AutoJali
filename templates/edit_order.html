@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-3" style="font-size: 1.5rem;">Edit Order</h1>
+    <form method="post" class="p-3 shadow rounded bg-white" style="font-size: 0.875rem;">
+        {% csrf_token %}
+
+        <div class="form-group mb-2">
+            <label for="fullname" class="form-label">Full Name:</label>
+            <input type="text" name="fullname" id="fullname" class="form-control" value="{{ order.fullname }}" required>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="phone" class="form-label">Phone:</label>
+            <input type="text" name="phone" id="phone" class="form-control" value="{{ order.phone }}" required>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="pickup_location" class="form-label">Pick Up Location:</label>
+            <input type="text" name="pickup_location" id="pickup_location" class="form-control" value="{{ order.pickup_location }}" required>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="drop_off_location" class="form-label">Drop Off Location:</label>
+            <input type="text" name="drop_off_location" id="drop_off_location" class="form-control" value="{{ order.drop_off_location }}" required>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="fare" class="form-label">Total To Be Paid:</label>
+            <input type="text" name="fare" id="fare" class="form-control" value="{{ order.fare }}" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="driver" class="form-label">Select Driver:</label>
+            <select id="driver" name="driver" class="form-control" required>
+                <option value="" disabled {% if not order.driver %}selected{% endif %}>Select a driver</option>
+                <option value="John Doe" {% if order.driver == "John Doe" %}selected{% endif %}>John Doe</option>
+                <option value="Jane Smith" {% if order.driver == "Jane Smith" %}selected{% endif %}>Jane Smith</option>
+                <option value="Mike Johnson" {% if order.driver == "Mike Johnson" %}selected{% endif %}>Mike Johnson</option>
+                <option value="Emily Davis" {% if order.driver == "Emily Davis" %}selected{% endif %}>Emily Davis</option>
+            </select>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-sm text-white" style="background-color: #ff0000; border-radius: 15px; padding: 0.5rem 1.5rem; font-size: 0.875rem;">Update</button>
+        </div>
+    </form>
+</div>
+
+<style>
+    body {
+        background-color: #f9f9f9;
+    }
+
+    h1 {
+        color: #333333;
+        font-weight: bold;
+    }
+
+    .form-group label {
+        font-size: 0.875rem;
+        color: #555555;
+    }
+
+    .form-control {
+        border-radius: 0.2rem;
+        border: 1px solid #cccccc;
+        font-size: 0.875rem;
+        padding: 0.5rem;
+    }
+
+    .form-control:focus {
+        border-color: #ff0000;
+        box-shadow: 0 0 0 0.1rem rgba(255, 0, 0, 0.25);
+    }
+
+    .btn {
+        font-size: 0.875rem;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #cc0000;
+    }
+
+    .container {
+        max-width: 500px;
+    }
+
+    form {
+        background: white;
+    }
+</style>
+{% endblock %}

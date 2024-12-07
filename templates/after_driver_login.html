@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <div class="row justify-content-center">
+        <!-- Button to view orders -->
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'view_orders' %}" class="btn btn-lg btn-danger w-100 py-4">
+                View Orders
+            </a>
+        </div>
+
+        <!-- Button to view driver details -->
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'view_driver_details' %}" class="btn btn-lg btn-danger w-100 py-4">
+                View Driver Details
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    h1 {
+        color: #333333;
+        font-weight: bold;
+    }
+
+    .btn {
+        font-size: 1.25rem;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #cc0000;
+    }
+
+    .container {
+        max-width: 800px;
+    }
+
+    .btn-danger {
+        background-color: #ff0000;
+        border-color: #ff0000;
+    }
+
+    .btn-danger:focus, .btn-danger:hover {
+        background-color: #cc0000;
+        border-color: #cc0000;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .py-4 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}

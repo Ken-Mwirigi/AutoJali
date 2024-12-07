@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1>Orders Made</h1>
+    <div class="table-responsive container mt-4">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Pick Up Location</th>
+                    <th>Drop Off Location</th>
+                    <th>Total Amount</th>
+                    <th>Assigned Driver</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each order object -->
+                {% for y in d_orders %}
+                    <tr>
+                        <td>{{ y.fullname }}</td>
+                        <td>{{ y.phone }}</td>
+                        <td>{{ y.pickup_location }}</td>
+                        <td>{{ y.drop_off_location }}</td>
+                        <td>{{ y.fare }}</td>
+                        <td>{{ y.driver }}</td>
+                        <td>
+                            <a href="/edit/{{ y.id }}" class="btn btn-dark" id="btn1">EDIT</a>
+                            <a href="/delete/{{ y.id }}" class="btn btn-danger">DELETE</a>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+<style>
+    .table {
+        background-color: white;
+    }
+    .btn-dark {
+        background-color: black;
+        color: white;
+    }
+    .btn-danger {
+        background-color: #ff0000;
+        color: white;
+    }
+    .btn-success {
+        background-color: black;
+        color: white;
+    }
+</style>

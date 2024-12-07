@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}AutoJali - Your Reliable Auto Companion{% endblock %}</title>
+    <meta name="description" content="AutoJali - Your Reliable Auto Companion">
+    <meta name="keywords" content="Auto, Breakdown Services, Car Repair">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}">
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Navbar styling for smaller header */
+        .navbar {
+            background-color: #ffffff;
+            font-size: 16px; /* Reduced font size */
+            font-weight: bold;
+            color: black;
+            padding: 0.5rem 1rem; /* Smaller padding */
+        }
+        .navbar .nav-link,
+        .navbar .navbar-brand {
+            color: rgb(0, 0, 0) !important;
+        }
+        .navbar .navbar-brand img {
+            height: 40px; /* Reduce logo size */
+            width: auto;
+        }
+        .navbar-nav {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-login, .btn-signup {
+            font-size: 14px; /* Smaller font for buttons */
+            padding: 5px 10px; /* Reduced padding */
+            border-radius: 25px; /* Rounded edges for buttons */
+        }
+
+        /* Footer styling for smaller footer */
+        .footer {
+            background-color: #f8f9fa;
+            font-size: 14px; /* Reduced font size */
+            padding: 0.5rem 0; /* Smaller padding */
+            text-align: center;
+            margin-top: auto; /* Ensures the footer is pushed to the bottom */
+        }
+        .footer .list-inline-item a {
+            color: rgba(0, 0, 0, 0.67);
+            font-size: 14px;
+        }
+        .footer .list-inline-item a:hover {
+            color: #000;
+        }
+
+        /* Responsive adjustments */
+        .btn-login, .btn-signup {
+            margin-left: 15px; /* Adjust the spacing between buttons */
+            margin-right: 15px; /* Add spacing on both sides */
+            padding: 10px 20px; /* Adjust padding for a balanced look */
+        }
+
+        @media (max-width: 768px) {
+            .btn-login, .btn-signup {
+                margin: 10px 0; /* Add vertical spacing for smaller screens */
+            }
+        }
+
+    </style>
+
+    {% block extra_head %}
+    {% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <!-- Logo Section -->
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'assets/img/autojalilogo.png' %}" alt="AutoJali Logo">
+        </a>
+
+        <!-- Navbar Toggle Button for Mobile View -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <!-- Home -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                <!-- About -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <!-- Services -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                <!-- Contact -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+
+                <!-- Login and Sign Up Buttons -->
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="btn btn-lg btn-login" style="background-color: #000000; color: #ffffff;">Car Owner Log In</a>
+                    <a href="{% url 'login-driver' %}" class="btn btn-lg btn-login" style="background-color: #000000; color: #ffffff;">Driver Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'register-type' %}" class="btn btn-lg btn-signup" style="background-color: #FF0000; color: #ffffff;">Sign Up</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container" style="flex-grow: 1;">
+        {% block content %}
+        <!-- Main content will be inserted here -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>
